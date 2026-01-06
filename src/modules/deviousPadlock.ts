@@ -111,7 +111,6 @@ export function registerDeviousPadlockInModStorage(group: AssetGroupItemName, ow
 }
 
 export async function inspectDeviousPadlock(): Promise<void> {
-	console.log("TEST 123")
 	//@ts-ignore
 	await CommonSetScreen("Character", "InspectDeviousPadlock");
 	DialogLeave();
@@ -375,6 +374,7 @@ function checkDeviousPadlocks(target: Character): void {
 				!modStorage.deviousPadlock.itemGroups ||
 				!modStorage.deviousPadlock.itemGroups[item.Asset.Group.Name as AssetGroupItemName]
 			) {
+				console.log(item);
 				if (!canPutDeviousPadlock(item.Asset.Group.Name as AssetGroupItemName, target, Player) || deviousPadlockTriggerCooldown.state) {
 					InventoryUnlock(Player, item.Asset.Group.Name as AssetGroupItemName);
 					ChatRoomCharacterUpdate(Player);
@@ -685,6 +685,20 @@ export function loadDeviousPadlock(): void {
 	hookFunction("TextLoad", HookPriority.OVERRIDE_BEHAVIOR, (args, next) => {
 		//@ts-ignore
 		if (CurrentScreen === "InspectDeviousPadlock") return;
+		return next(args);
+	});
+
+	//Prevent Player from injecting a different saved data by doing something like:
+	//	Player.ExtensionSettings.DOGS = LZString.compressToBase64('{"remoteControl":{"state":true,"connectMinimumRole":2},"deviousPadlock":{"state":false,"itemGroups":{}},"misc":{"autoShowChangelog":false},"version":"2.0.4"}') 
+	//	ServerPlayerExtensionSettingsSync("DOGS")
+	//Effectivly cleaning all DOGS padlocks
+	hookFunction("ServerPlayerExtensionSettingsSync", HookPriority.ADD_BEHAVIOR, (args, next) => {
+		console.log(args);
+		if(Player.ExtensionSettings.DOGS != LZString.compressToBase64(JSON.stringify(modStorage))){
+			console.log("DOGS: warning modified mod data")
+			syncStorage();
+			return
+		}
 		return next(args);
 	});
 }
