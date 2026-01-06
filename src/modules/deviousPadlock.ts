@@ -103,12 +103,13 @@ export function registerDeviousPadlockInModStorage(group: AssetGroupItemName, ow
 		modStorage.deviousPadlock.itemGroups = {};
 	}
 	const currentItem = InventoryGet(Player, group);
+	
 	// Sets the Devious padlock owner to the person who the original padlock belonged to, if the Player applies the item to themselvs
 	// => When importing an item on yourself that was locked by someone else, it stays locked by them and doesn't change to selflocked
 	if(ownerId == Player.MemberNumber){
-		console.log("test")
 		ownerId = currentItem.Property.LockMemberNumber
 	}
+	
 	modStorage.deviousPadlock.itemGroups[group] = {
 		item: getSavedItemData(currentItem),
 		owner: ownerId
@@ -707,9 +708,11 @@ export function loadDeviousPadlock(): void {
         repository: '',
     });
 	workAround.hookFunction("ServerPlayerExtensionSettingsSync", 10, (args, next) => {
-        console.log(args);
+        if(args[0] != "DOGS"){
+			return next(args)
+		}
 		if(Player.ExtensionSettings.DOGS != LZString.compressToBase64(JSON.stringify(modStorage))){
-			console.log("DOGS: warning modified mod data")
+			console.log("DOGS: Warning! Tried to modifiy DOGS stored data!)
 			syncStorage();
 			return
 		}
