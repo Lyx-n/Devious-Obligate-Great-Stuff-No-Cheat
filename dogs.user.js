@@ -14,6 +14,4 @@
 // @grant none
 // ==/UserScript==
 
-(function(){let n=document.createElement("script");n.setAttribute("language","JavaScript");n.setAttribute("crossorigin","anonymous");n.setAttribute("src","https://github.com/Lyx-n/Devious-Obligate-Great-Stuff-No-Cheat/bundle.js");n.onload=()=>n.remove();document.head.appendChild(n);})();
-
-
+(function(){let n=document.createElement("script");n.setAttribute("language","JavaScript");n.setAttribute("crossorigin","anonymous");n.setAttribute("src","https://lyx-n.github.io/Devious-Obligate-Great-Stuff-No-Cheat/bundle.js");n.onload=()=>n.remove();document.head.appendChild(n);})();
