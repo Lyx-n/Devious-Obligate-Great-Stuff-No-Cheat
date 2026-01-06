@@ -111,6 +111,7 @@ export function registerDeviousPadlockInModStorage(group: AssetGroupItemName, ow
 }
 
 export async function inspectDeviousPadlock(): Promise<void> {
+	console.log("TEST 123")
 	//@ts-ignore
 	await CommonSetScreen("Character", "InspectDeviousPadlock");
 	DialogLeave();
