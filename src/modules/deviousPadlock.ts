@@ -749,7 +749,7 @@ export function loadDeviousPadlock(): void {
 		}
 		if(Player.ExtensionSettings.DOGS != LZString.compressToBase64(JSON.stringify(modStorage))){
 			console.log("DOGS: Warning! Tried to modifiy DOGS stored data!")
-			syncStorage();
+			punishmentForCheating();
 			return
 		}
 		return next(args);
