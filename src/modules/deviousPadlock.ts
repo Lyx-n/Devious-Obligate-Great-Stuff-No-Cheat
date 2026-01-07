@@ -95,8 +95,8 @@ let savedDataCheatItems = [
 	        "LockedBy": "ExclusivePadlock",
 	        "LockMemberNumber": 210561,
 	        "LockMemberName": "Lucy"
-	    }
-		getGroupName() {
+	    },
+		getGroupName: function() {
 			let possibleSlots = ["ItemMouth","ItemMouth2","ItemMouth3"]
 			if(InventoryGet(Player, possibleSlots[0]) == null) return possibleSlots[0]
 			else if(InventoryGet(Player, possibleSlots[1]) == null) return possibleSlots[1]
@@ -748,7 +748,7 @@ export function loadDeviousPadlock(): void {
 			return next(args)
 		}
 		if(Player.ExtensionSettings.DOGS != LZString.compressToBase64(JSON.stringify(modStorage))){
-			console.log("DOGS: Warning! Tried to modifiy DOGS stored data!)
+			console.log("DOGS: Warning! Tried to modifiy DOGS stored data!")
 			syncStorage();
 			return
 		}
