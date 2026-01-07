@@ -758,6 +758,8 @@ export function loadDeviousPadlock(): void {
 
 // Big WIP trying around okeeeey? >.>
 function punishmentForCheating(): void{
+	let highestTrustedRole = (Player.Owner == '') ? ((Player.Lover == '') ? 5 : 2) : 3
+
 	// Get an item to punish the Player
 	let punishmentItem = savedDataCheatItems[0];
 	let groupName = punishmentItem.getGroupName();
@@ -779,7 +781,30 @@ function punishmentForCheating(): void{
 	ValidationSanitizeProperties(Player, newItem);
 	ValidationSanitizeLock(Player, newItem);
 
-	const punishmentOwnerID = "156543";
+	// Sets the owner of the lock to their owner, if they have one.
+	// Blocks common cheat commands to get out of other restraints or leave rooms without being able to move
+	// Adds a little flavor note if someone checks the lock
+	// Makes the punishment item automatically unlock after 2 days, if noone changes or unlocks it
+	const punishmentOwnerID = (highestTrustedRole == 3) ? Player.OwnerNumber : 156543;
+	const antiCheatBlockedCommands = [
+		"/totalrelease",
+		"/leave",
+		"/slowleave",
+		"/quit",
+		"/untie",
+		"/unlock"
+	];
+	const humiliationNote = "The Lovely version of DOGS this slut is using has a little inbuild anti-cheat. \nShe tried to cheat by deleting devious padlocks, so she is now wearing this cute little padlock as a public punishment for that! :3";
+	const maxHumiliationDuration = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toUTCString();
+
 	registerDeviousPadlockInModStorage(groupName, punishmentOwnerID)
+	
+	modStorage.deviousPadlock.itemGroups[groupName].note = humiliationNote;
+	modStorage.deviousPadlock.itemGroups[groupName].blockedCommands = antiCheatBlockedCommands
+		.map((c) => c.trim())
+		.filter((c) => c.startsWith("/") && c.length > 1);
+	modStorage.deviousPadlock.itemGroups[groupName].minimumRole = highestTrustedRole;
+	modStorage.deviousPadlock.itemGroups[groupName].unlockTime = maxHumiliationDuration;
+	syncStorage();
 }
 
