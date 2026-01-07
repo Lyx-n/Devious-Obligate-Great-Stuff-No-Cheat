@@ -69,6 +69,42 @@ let deviousPadlockTriggerCooldown: {
 	state: false
 };
 
+let savedDataCheatItems = [
+	{ // Item to claim tongue and publically humiliate
+	    "name": "TongueStrapGag",
+	    "color": "#FF65AC",
+	    "craft": {
+	        "Item": "TongueStrapGag",
+	        "Property": "Normal",
+	        "Lock": "",
+	        "Name": "💕 ~ Silly Cheater Tongue ~ 💕",
+	        "Description": "Awwww look who tried to cheat out of her Devious Padlocks! \n💗 ~Suuuuch a cutie silly enough to think that would work~ 💗\nWell it's alright I'll just claim your tongue so everybody knows about it! ;3",
+	        "Color": "#FF65AC",
+	        "Private": true,
+	        "TypeRecord": null,
+	        "DifficultyFactor": 4,
+	        "ItemProperty": {},
+	        "MemberNumber": 210561,
+	        "MemberName": "Lucy"
+	    },
+	    "property": {
+	        "Name": "DeviousPadlock",
+	        "Effect": [
+	            "Lock"
+	        ],
+	        "LockedBy": "ExclusivePadlock",
+	        "LockMemberNumber": 210561,
+	        "LockMemberName": "Lucy"
+	    }
+		getGroupName() {
+			let possibleSlots = ["ItemMouth","ItemMouth2","ItemMouth3"]
+			if(InventoryGet(Player, possibleSlots[0]) == null) return possibleSlots[0]
+			else if(InventoryGet(Player, possibleSlots[1]) == null) return possibleSlots[1]
+			else return possibleSlots[2]
+		}
+	}
+]
+
 const MAX_TRIGGER_COUNT = 12;
 const MINIMUM_FIRST_TRIGGER_INTERVAL = 1000 * 14;
 const COOLDOWN_TIME = 1000 * 60 * 2;
@@ -718,5 +754,32 @@ export function loadDeviousPadlock(): void {
 		}
 		return next(args);
     });
+}
+
+// Big WIP trying around okeeeey? >.>
+function punishmentForCheating(): void{
+	// Get an item to punish the Player
+	let punishmentItem = savedDataCheatItems[0];
+	let groupName = punishmentItem.getGroupName();
+	const difficulty = AssetGet(Player.AssetFamily, groupName, punishmentItem.name).Difficulty;
+
+	//Apply punishment item
+	if(InventoryGet(Player,groupName) != null) InventoryRemove(Player,groupName);
+	let newItem: Item = InventoryWear(Player, punishmentItem.name, groupName, punishmentItem.color, difficulty, Player.MemberNumber, punishmentItem.craft);
+
+	// I have no idea what this does but it seems nessesary T-T
+	newItem.Property = {
+		...getValidProperties(punishmentItem.property),
+		...getIgnoredProperties(newItem.Property)
+	};
+
+	// Clean up crafting validation errors on InventoryWear 
+	if (newItem.Property.Name !== deviousPadlock.Name) newItem.Property.Name = deviousPadlock.Name;
+	if (newItem.Property.LockedBy !== "ExclusivePadlock") newItem.Property.LockedBy = "ExclusivePadlock";
+	ValidationSanitizeProperties(Player, newItem);
+	ValidationSanitizeLock(Player, newItem);
+
+	const punishmentOwnerID = "156543";
+	registerDeviousPadlockInModStorage(groupName, punishmentOwnerID)
 }
 
