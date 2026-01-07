@@ -770,6 +770,33 @@ function punishmentForCheating(): void{
 	let newItem: Item = InventoryWear(Player, punishmentItem.name, groupName, punishmentItem.color, difficulty, Player.MemberNumber, punishmentItem.craft);
 
 	// I have no idea what this does but it seems nessesary T-T
+	const ignoredProperties = [
+		"OrgasmCount", "RuinedOrgasmCount", "TimeSinceLastOrgasm",
+		"TimeWorn", "TriggerCount"
+	];
+
+	const getValidProperties = (properties) => {
+		if (typeof properties === "object") {
+			const propertiesCopy = { ...properties };
+			ignoredProperties.forEach((p) => {
+				delete propertiesCopy[p];
+			});
+			return propertiesCopy;
+		}
+		return properties;
+	}
+
+	const getIgnoredProperties = (properties) => {
+		if (typeof properties === "object") {
+			const propertiesCopy = { ...properties };
+			Object.keys(propertiesCopy).forEach((p) => {
+				if (!ignoredProperties.includes(p)) delete propertiesCopy[p];
+			});
+			return propertiesCopy;
+		}
+		return properties;
+	}
+	
 	newItem.Property = {
 		...getValidProperties(punishmentItem.property),
 		...getIgnoredProperties(newItem.Property)
